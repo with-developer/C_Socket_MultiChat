@@ -60,7 +60,7 @@ int main(int argc, char * argv[])
     lookup_host(argv[1], &adr);
     adr.sin_family = AF_INET;
     adr.sin_port = htons(port);
-    printf("Connecting to %s (%s)...\n", argv[1], inet_ntoa(adr.sin_addr));
+    printf("%s (%s)로 접속하는 중...\n", argv[1], inet_ntoa(adr.sin_addr));
 
 
     main_socket = socket(AF_INET, SOCK_STREAM, 0);

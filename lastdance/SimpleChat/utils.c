@@ -433,8 +433,8 @@ void auth(int socket)
 void auth2(poll_fds fds, clients cl, int client, char * str, int socket)
 {
     char s[] = "*** 환영합니다! ", * temp;
-    char busy[] = "### 이미 사용중인 이름입니다. \n";
-    char banned[] = "### 금지된 이름입니다.\n";
+    char busy[] = "### 이미 사용중인 이름입니다. ###\n";
+    char banned[] = "### 금지된 이름입니다. ###\n";
     int size, i;
     strip(str);
     if(strcmp(str, "") == 0)
@@ -463,7 +463,7 @@ void auth2(poll_fds fds, clients cl, int client, char * str, int socket)
         strcpy(temp, "");
         strcat(temp, s);
         strcat(temp, str);
-        strcat(temp, "님\n");
+        strcat(temp, "님!\n\n");
         mass_send(fds, temp, size);
         free(temp);
     }

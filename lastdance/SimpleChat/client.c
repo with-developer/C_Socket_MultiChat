@@ -119,8 +119,7 @@ int main(int argc, char * argv[])
                         exit(0);
                         break;
                     case 1:
-                        /*Закончися сервер*/
-                        fprintf(stderr, "서버 연결 해제\n");
+                        fprintf(stderr, "서버 연결이 해제되었습니다. \n");
                         exit(0);
                         break;
                     }

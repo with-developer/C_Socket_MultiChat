@@ -119,7 +119,8 @@ int main(int argc, char * argv[])
                         exit(0);
                         break;
                     case 1:
-                        fprintf(stderr, "sex \n");
+                        // fprintf(stderr, "sex \n");
+                        fprintf(stderr, "F.тключены от сервера\n");
                         exit(0);
                         break;
                     }

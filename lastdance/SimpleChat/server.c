@@ -18,7 +18,7 @@ clients clients_base;
 void int_signal()
 {
     int i;
-    char s[] = "### 서버가 닫힙니다.\n";
+    char s[] = "### 서버가 닫힙니다. ###\n";
     mass_send(fds, s, sizeof(s));
     for(i = 0; i < get_fds_size(); i++)
     {

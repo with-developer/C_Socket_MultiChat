@@ -154,7 +154,7 @@ void clear_fds(poll_fds fds)
 int disconnect(poll_fds *fds, clients *cl, int id)
 {
     int new_id, len;
-    char *temp, msg[] = "*** 서버를 떠났습니다. ";
+    char *temp, msg[] = "*** 서버를 떠났습니다. ***";
 
     len = sizeof(msg) + strlen((*cl)[id].name) + 1;
     temp = malloc(sizeof(char) * len);
@@ -368,7 +368,7 @@ void cut(char *s, int n)
 
 void set_pswrd()
 {
-    printf("서버의 관리자 암호를 입력하세요:\n");
+    printf("서버의 관리자 암호를 입력하세요\n>>> ");
     scanf("%256s", pswrd);
 }
 
@@ -426,13 +426,13 @@ void ban_clean()
 
 void auth(int socket)
 {
-    char str[] = "### 이름을 입력하세요.\n>>>";
+    char str[] = "### 이름을 입력하세요.\n>>> ";
     write(socket, str, sizeof(str));
 }
 
 void auth2(poll_fds fds, clients cl, int client, char * str, int socket)
 {
-    char s[] = "*** 환영합니다, ", * temp;
+    char s[] = "*** 환영합니다! ", * temp;
     char busy[] = "### 이미 사용중인 이름입니다. \n";
     char banned[] = "### 금지된 이름입니다.\n";
     int size, i;
@@ -463,7 +463,7 @@ void auth2(poll_fds fds, clients cl, int client, char * str, int socket)
         strcpy(temp, "");
         strcat(temp, s);
         strcat(temp, str);
-        strcat(temp, "!\n");
+        strcat(temp, "님\n");
         mass_send(fds, temp, size);
         free(temp);
     }

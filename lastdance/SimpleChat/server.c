@@ -96,7 +96,7 @@ int main(int argc, char * argv[])
             clients_base = add_client(clients_base);
 
 
-            write(temp_socket,"server-MZH\n",strlen("server-MZH\n"));
+            write(temp_socket,"채팅방 접속 완료\n",strlen("채팅방 접속 완료\n"));
             auth(temp_socket);
             fds[0].revents = 0;
         }

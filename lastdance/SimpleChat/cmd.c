@@ -41,7 +41,7 @@ struct one_cmd cmds_str[] =
     {"\\users", users, " - 현재 사용자 목록을 표시합니다\n"},
     {"\\quit", quit, " [<메시지>] - 작별 메시지와 함께 서버를 떠납니다.\n"},
     {"\\private", private, " <이름> - 사용자에게 개인 메시지 보내기\n"},
-    {"\\privates", privates, " - 비공개 메시지를 보낸 모든 사람의 이름\n"},
+    {"\\privates", privates, " - 나의 메시지를 받은 사람\n"},
     {"\\help", help, " - 도움말\n"},
     {"\\ban", ban, " <이름> <사유> - 사용자 차단(관리자 권한)\n"},
     {"\\kick", kick, " <이름> <사유> - 사용자 강제퇴장(관리자 권한)\n"},
@@ -92,7 +92,7 @@ int cmds(poll_fds *fds, clients *cl, int id, char * buf)
 void users(poll_fds *fds, clients *cl, int id, char * opt)
 {
     int i, len;
-    char * temp, msg[] = "### 현재 온라인: ";
+    char * temp, msg[] = "### 현재 온라인중인 사람 ###\n>>> ";
     len = sizeof(msg);
     for(i = 1; i < get_fds_size(); i++)
         len += strlen((*cl)[i].name) + 2;
@@ -170,7 +170,7 @@ void private(poll_fds *fds, clients *cl, int id, char *opt)
 void privates(poll_fds *fds, clients *cl, int id, char *opt)
 {
     int i, len;
-    char *temp, promt[] = "### 당신은 메시지를 보냈습니다: ";
+    char *temp, promt[] = "### 나의 메시지를 받은 사람 ###\n>>>";
     len = sizeof(promt);
     for(i = 0; i < (*cl)[id].size_names; i++)
         len += strlen((*cl)[id].recv[i]) + 2;
@@ -192,7 +192,7 @@ void privates(poll_fds *fds, clients *cl, int id, char *opt)
 
 void help(poll_fds *fds, clients *cl, int id, char *opt)
 {
-    char promt[] = "### 팀: \n", *temp;
+    char promt[] = "### 도움말 ### \n", *temp;
     int i, len = sizeof(promt);
     for(i = 0; i < LAST - 1; i++)
         len += strlen(cmds_str[i].help) + strlen(cmds_str[i].cmd_str);

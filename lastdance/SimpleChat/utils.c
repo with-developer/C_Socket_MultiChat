@@ -426,13 +426,13 @@ void ban_clean()
 
 void auth(int socket)
 {
-    char str[] = "### 이름을 입력하세요.: \n";
+    char str[] = "### 이름을 입력하세요.\n>>>";
     write(socket, str, sizeof(str));
 }
 
 void auth2(poll_fds fds, clients cl, int client, char * str, int socket)
 {
-    char s[] = "*** 환영합니다., ", * temp;
+    char s[] = "*** 환영합니다, ", * temp;
     char busy[] = "### 이미 사용중인 이름입니다. \n";
     char banned[] = "### 금지된 이름입니다.\n";
     int size, i;

@@ -39,8 +39,8 @@ void passwd(poll_fds fds, clients cl, int id, char *opt);
 struct one_cmd cmds_str[] =
 {
     {"\\users", users, " - 현재 사용자 목록을 표시합니다\n"},
-    {"\\quit", quit, " [<메시지>] - 작별 메시지와 함께 서버를 떠납니다.\n"},
-    {"\\private", private, " <이름> - 사용자에게 개인 메시지 보내기\n"},
+    {"\\quit", quit, " <메시지> - 작별 메시지와 함께 서버를 떠납니다.\n"},
+    {"\\private", private, " <이름> <메시지> - 사용자에게 개인 메시지 보내기\n"},
     {"\\privates", privates, " - 나의 메시지를 받은 사람\n"},
     {"\\help", help, " - 도움말\n"},
     {"\\ban", ban, " <이름> <사유> - 사용자 차단(관리자 권한)\n"},
@@ -160,7 +160,7 @@ void private(poll_fds *fds, clients *cl, int id, char *opt)
     if(i == (*cl)[id].size_names)
         add_name(*cl, id, name);
     free(name);
-    ind_send(*fds, usr_id, "* ", 2);
+    ind_send(*fds, usr_id, "(귓속말) ", 2);
     ind_send(*fds, usr_id, (*cl)[id].name, strlen((*cl)[id].name));
     ind_send(*fds, usr_id, ": ", 2);
     strcat(opt, "\n");

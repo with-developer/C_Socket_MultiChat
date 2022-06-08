@@ -1,104 +1,144 @@
-#include "lib.h"
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <netinet/ip.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <poll.h>
+#include <netdb.h>
 
-char client_name[MAX];
+#define BUF_SIZE 256
+#define MAX_DESC 2
 
-void* fsend(void* sockfd) 
+int lookup_host(const char *host, struct sockaddr_in * adr)
 {
-	char buff[MAX]; 
-	int n;
-    	int first=0;	
-	for (;;) { 
-		strcpy(buff, client_name); // put client name into buff
-		if(!first){
-			send(*(int*)sockfd, buff, sizeof(buff), 0); 
-			first=1;
-		}
-		else{
-        		strcat(buff, ": ");
-			n= strlen(buff); 
+    struct addrinfo *res, *result;
+    int errcode;
 
-			while ((buff[n++] = getchar()) != '\n') 
-			; 
-			if(!strncmp(buff+strlen(client_name)+2,"exit",4)){
-				bzero(buff, sizeof(buff)); 
-				exit(0);
-			}
+    errcode = getaddrinfo(host, NULL, NULL, &result);
+    if (errcode != 0)
+    {
+        fprintf(stderr, "%s (%d): 잘못된 IP 주소를 입력했습니다. : %s\n",
+                __FILE__, __LINE__ - 4,  strerror(errno));
+        freeaddrinfo(result);
+        exit(1);
+    }
 
-			send(*(int*)sockfd, buff, sizeof(buff), 0); 
-			bzero(buff, sizeof(buff)); 
-		}
-	}
+    res = result;
+    memcpy(adr, res->ai_addr, sizeof(struct sockaddr_in));
+    freeaddrinfo(result);
+    return 0;
 }
 
-void* frecv(void* sockfd) 
+int main(int argc, char * argv[])
 {
-	char buff[MAX];
-	char* time_str;
-	time_str=(char*)malloc(50);
-	for(;;){		
-		recv(*(int*)sockfd, buff, sizeof(buff), 0);
+    int main_socket, port, events, i;
+    ssize_t n_read;
+    char buf[BUF_SIZE + 1];
+    struct sockaddr_in adr;
 
-		if(buff[0]=='\0'){
-			get_time(time_str);			
-			printf("\n%s-------Server shut down-------\n", time_str);			
-			break;
-		}
-		get_time(time_str);
-		printf("\n%s%s",time_str, buff); 
-		bzero(buff, sizeof(buff)); 
-	}
+    struct pollfd fds[MAX_DESC];
+
+    if(argc < 3)
+    {
+        fprintf(stderr,"매개변수에 주소와 포트 번호를 지정해야합니다.\n");
+        return 1;
+    }
+
+    if(argc > 3)
+    {
+        fprintf(stderr,"매개변수에 주소와 포트 번호를 지정해야합니다.\n");
+        return 1;
+    }
+
+    port = atoi(argv[2]);
+
+    lookup_host(argv[1], &adr);
+    adr.sin_family = AF_INET;
+    adr.sin_port = htons(port);
+    printf("%s (%s)로 접속하는 중...\n", argv[1], inet_ntoa(adr.sin_addr));
+
+
+    main_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (main_socket == -1)
+    {
+        fprintf(stderr, "%s (%d): 소켓이 생성되지 않았습니다.: %s\n",
+                __FILE__, __LINE__ - 3,  strerror(errno));
+        exit(1);
+    }
+
+
+    if(connect(main_socket, (struct sockaddr *) &adr, sizeof(adr)) == -1)
+    {
+        fprintf(stderr, "%s (%d): 연결 실패: %s\n",
+                __FILE__, __LINE__ - 2,  strerror(errno));
+        exit(1);
+    }
+    fds[0].fd = 0;
+    fds[0].events = POLLIN | POLLERR;
+    fds[0].revents = 0;
+
+    fds[1].fd = main_socket;
+    fds[1].events = POLLIN | POLLERR | POLLPRI;
+    fds[1].revents = 0;
+
+    for(;;)
+    {
+        events = poll(fds, MAX_DESC, 100);
+        if(events == -1)
+        {
+            fprintf(stderr, "%s (%d): 설문조사 문제: %s\n",
+                    __FILE__, __LINE__ - 3,  strerror(errno));
+            exit(1);
+        }
+
+        if(events == 0)
+            continue;
+
+        for(i = 0; i < MAX_DESC; i++)
+        {
+            if(fds[i].revents > 0)
+            {
+                n_read = read(fds[i].fd, buf, BUF_SIZE);
+                if(n_read == -1)
+                {
+                    fprintf(stderr, "%s (%d): 소켓에서 읽는 중 오류 발생: %s\n",
+                            __FILE__, __LINE__ - 3,  strerror(errno));
+                    exit(1);
+                }
+                if(n_read == 0)
+                {
+                    switch (i)
+                    {
+                    case 0:
+                        exit(0);
+                        break;
+                    case 1:
+                        fprintf(stderr, "서버에서 연결 해제됨\n");
+                        exit(0);
+                        break;
+                    }
+                }
+                if(n_read > 0)
+                {
+                    buf[n_read]='\0';
+                    switch (i)
+                    {
+                    case 0:
+                        write(main_socket, buf, n_read + 1);
+                        break;
+                    case 1:
+                        write(1, buf, n_read + 1);
+                        break;
+                    }
+                }
+            }
+            fds[i].revents = 0;
+        }
+    }
+    return 100;
 }
-
-int main(int argc, char *argv[]) 
-{ 
-	int sockfd, clientfd; 
-	struct sockaddr_in clientaddr; 
-	struct hostent *host;
-
-	bzero(client_name, sizeof(client_name));
-	strcpy(client_name, argv[2]);
-	
-	if (argc !=3)  
-   	{  
-        	printf("-------wrong usage-------");  
-        	exit(1);  
-    	}  
-	
-	
-	// socket create and varification 
-	clientfd = socket(AF_INET, SOCK_STREAM, 0); 
-	if (clientfd == -1) { 
-		printf("-------socket creation failed-------\n"); 
-		exit(0); 
-	} 
-	else
-		printf("-------Socket successfully created-------\n"); 
-
-	bzero(&clientaddr, sizeof(clientaddr)); 
-
-	// assign IP, PORT 
-	clientaddr.sin_family = AF_INET; 
-	clientaddr.sin_port = htons((uint16_t)8080); 
-	inet_pton(AF_INET, argv[1], &clientaddr.sin_addr);
-
-	// connect the client socket to server socket 
-	if (connect(clientfd, (struct sockaddr*)&clientaddr, sizeof(clientaddr)) != 0) { 
-		printf("-------connection with the server failed-------\n"); 
-		exit(0); 
-	} 
-	else
-		printf("-------connected to the server-------\n"); 
-
-
-	pthread_t thr_send, thr_recv;
-
-	pthread_create(&thr_send, NULL, fsend, (void*) &clientfd);
-	pthread_create(&thr_recv, NULL, frecv, (void*) &clientfd);
-
-	pthread_join(thr_send, NULL);
-	pthread_join(thr_recv, NULL);
-
-	// close the socket 
-	close(clientfd); 
-} 
-

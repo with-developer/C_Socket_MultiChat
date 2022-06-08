@@ -1,12 +1,28 @@
-target : server.o client.o
-			gcc -o server server.o -lpthread 
-			gcc -o client client.o	-lpthread		
-server.o : server.c
-		gcc -c -o server.o server.c -lpthread
-client.o : client.c
-		gcc -c -o client.o client.c -lpthread
-		
-clean :
-		rm *.o server client
-		
-.PHONY : clean
+CC= gcc
+CFLAGS= -Wall -Wextra -g
+
+BINARIES= client.out server.out
+SOURCES= client.c server.c utils.c cmd.c
+
+OBJS=$(patsubst %.c, %.o, $(SOURCES))
+
+all: $(BINARIES)
+
+client.out: client.o utils.o
+	$(CC) $(CFLAGS) $^ -o $@
+
+server.out: server.o utils.o cmd.o
+	$(CC) $(CFLAGS) $^ -o $@
+
+%.o: %.c 
+	$(CC) $(CFLAGS) -c $^
+
+utils.c: utils.h
+cmd.c: cmd.h
+
+clean:
+	rm -f *.o
+
+distclean: clean
+	rm -f $(BINARIES)
+

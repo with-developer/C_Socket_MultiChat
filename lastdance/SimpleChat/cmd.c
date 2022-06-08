@@ -14,7 +14,7 @@ struct one_cmd
     char * help;
 };
 
-char no_perms[] = "### Недостаточно прав для выполнения команды\n";
+char no_perms[] = "### 명령을 실행할 권한이 부족합니다.\n";
 
 void users(poll_fds *fds, clients *cl, int id, char *opt);
 void quit(poll_fds *fds, clients *cl, int id, char *opt);
@@ -38,16 +38,16 @@ void passwd(poll_fds fds, clients cl, int id, char *opt);
 */
 struct one_cmd cmds_str[] =
 {
-    {"\\users", users, " - выводит текущий список пользователей\n"},
-    {"\\quit", quit, " [<сообщение>] - покинуть сервер с прощальным сообщением\n"},
-    {"\\private", private, " <имя> - отправить приватное сообщение пользователю\n"},
-    {"\\privates", privates, " - имена всех, кому вы отправляли приватные сообщения\n"},
-    {"\\help", help, " - помощь по доступным командам\n"},
-    {"\\ban", ban, " <имя> <причина> - заблокировать пользователя(А)\n"},
-    {"\\kick", kick, " <имя> <причина> - отключить человека с сервера(А)\n"},
-    {"\\nick", nick, " <старое имя> <новое имя> - поменять имя человеку(А)\n"},
-    {"\\shutdown", shutdown, " <сообщение> - отключить сервер с сообщением(А)\n"},
-    {"\\admin", admin, " <пароль> - получить права админа\n"},
+    {"\\users", users, " - 현재 사용자 목록을 표시합니다\n"},
+    {"\\quit", quit, " [<메시지>] - 작별 메시지와 함께 서버를 떠납니다.\n"},
+    {"\\private", private, " <이름> - 사용자에게 개인 메시지 보내기\n"},
+    {"\\privates", privates, " - 비공개 메시지를 보낸 모든 사람의 이름\n"},
+    {"\\help", help, " - 도움말\n"},
+    {"\\ban", ban, " <이름> <사유> - 사용자 차단(관리자 권한)\n"},
+    {"\\kick", kick, " <이름> <사유> - 사용자 강제퇴장(관리자 권한)\n"},
+    {"\\nick", nick, " <기존 이름> <새로운 이름> - 사용자 이름 변경(관리자 권한)\n"},
+    {"\\shutdown", shutdown, " <메시지> - 메시지와 함께 서버 비활성화(관리자 권한)\n"},
+    {"\\admin", admin, " <비밀번호> - 관리자 권한 얻기\n"},
     /*  Нереализованный функционал:
      *  {"\\room", room},
         {"\\topic", topic},
@@ -92,7 +92,7 @@ int cmds(poll_fds *fds, clients *cl, int id, char * buf)
 void users(poll_fds *fds, clients *cl, int id, char * opt)
 {
     int i, len;
-    char * temp, msg[] = "### Сейчас онлайн: ";
+    char * temp, msg[] = "### 현재 온라인: ";
     len = sizeof(msg);
     for(i = 1; i < get_fds_size(); i++)
         len += strlen((*cl)[i].name) + 2;
@@ -122,9 +122,9 @@ void quit(poll_fds *fds, clients *cl, int id, char *opt)
 void private(poll_fds *fds, clients *cl, int id, char *opt)
 {
     char *name;
-    char no_name[] = "### Отсутсвует параметр имя\n";
-    char no_pers[] = "### Такого человека нет в сети\n";
-    char no_msg[] = "### Пустое сообщение\n";
+    char no_name[] = "### 이름 매개변수 누락\n";
+    char no_pers[] = "### 이 사람은 온라인 상태가 아닙니다.\n";
+    char no_msg[] = "### 빈 메시지\n";
     int len_name, usr_id, i;
 
     if(opt[0] == '\0')
@@ -170,7 +170,7 @@ void private(poll_fds *fds, clients *cl, int id, char *opt)
 void privates(poll_fds *fds, clients *cl, int id, char *opt)
 {
     int i, len;
-    char *temp, promt[] = "### Вы отправляли сообщения: ";
+    char *temp, promt[] = "### 당신은 메시지를 보냈습니다: ";
     len = sizeof(promt);
     for(i = 0; i < (*cl)[id].size_names; i++)
         len += strlen((*cl)[id].recv[i]) + 2;
@@ -192,7 +192,7 @@ void privates(poll_fds *fds, clients *cl, int id, char *opt)
 
 void help(poll_fds *fds, clients *cl, int id, char *opt)
 {
-    char promt[] = "### Команды: \n", *temp;
+    char promt[] = "### 팀: \n", *temp;
     int i, len = sizeof(promt);
     for(i = 0; i < LAST - 1; i++)
         len += strlen(cmds_str[i].help) + strlen(cmds_str[i].cmd_str);
@@ -211,10 +211,10 @@ void help(poll_fds *fds, clients *cl, int id, char *opt)
 void ban(poll_fds *fds, clients *cl, int id, char *opt)
 {
     char *name;
-    char no_name[] = "### Отсутсвует параметр имя\n";
-    char no_pers[] = "### Такого человека нет в сети\n";
-    char no_reason[] = "### Пустая причина\n";
-    char promt[] = "### Вас забанили с сервера по причине: ";
+    char no_name[] = "### 이름 매개변수 누락.\n";
+    char no_pers[] = "### 이 사람은 온라인 상태가 아닙니다.\n";
+    char no_reason[] = "### 이유가 없습니다.\n";
+    char promt[] = "### 귀하는 서버에서 차단되었습니다.: ";
     int len_name, usr_id;
     if((*cl)[id].perm < 1)
     {
@@ -259,10 +259,10 @@ void ban(poll_fds *fds, clients *cl, int id, char *opt)
 void kick(poll_fds *fds, clients *cl, int id, char *opt)
 {
     char *name;
-    char no_name[] = "### Отсутсвует параметр имя\n";
-    char no_pers[] = "### Такого человека нет в сети\n";
-    char no_reason[] = "### Пустая причина\n";
-    char promt[] = "### Вас выкинули с сервера по причине: ";
+    char no_name[] = "### 이름 매개변수 누락.\n";
+    char no_pers[] = "### 이 사람은 온라인 상태가 아닙니다.\n";
+    char no_reason[] = "### 이유가 없습니다.\n";
+    char promt[] = "### 귀하는 서버에서 차단되었습니다.: ";
     int len_name, usr_id;
     if((*cl)[id].perm < 1)
     {

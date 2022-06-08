@@ -306,11 +306,11 @@ void kick(poll_fds *fds, clients *cl, int id, char *opt)
 void nick(poll_fds *fds, clients *cl, int id, char *opt)
 {
     char *name;
-    char no_name1[] = "### Отсутсвует первое имя\n";
-    char no_online[] = "### Такого человека нет в сети\n";
-    char no_name2[] = "### Отсутсвует второе имя\n";
-    char busy[] = "### Новое имя уже занято\n";
-    char promt[] = "*** Смена имени: ";
+    char no_name1[] = "### 이름 누락\n";
+    char no_online[] = "### 이 사람은 온라인 상태가 아닙니다.\n";
+    char no_name2[] = "### 중간 이름 누락\n";
+    char busy[] = "### 이미 사용 중인 새 이름\n";
+    char promt[] = "*** 이름 변경: ";
     int len_name, usr_id;
     if((*cl)[id].perm < 1)
     {
@@ -362,8 +362,8 @@ void nick(poll_fds *fds, clients *cl, int id, char *opt)
 
 void shutdown(poll_fds *fds, clients *cl, int id, char *opt)
 {
-    char no_promt[] = "### Отсутсвует сообщение\n";
-    char promt[] = "### Сервер завершается, причина - ";
+    char no_promt[] = "### 누락된 메시지\n";
+    char promt[] = "### 서버를 종료하는 중입니다. - ";
     if((*cl)[id].perm < 1)
     {
         ind_send(*fds, id, no_perms, sizeof(no_perms));
@@ -388,8 +388,8 @@ void shutdown(poll_fds *fds, clients *cl, int id, char *opt)
 
 void admin(poll_fds *fds, clients *cl, int id, char *opt)
 {
-    char suc[] = "### Вы теперь администратор\n";
-    char inc[] = "### Неверный пароль!\n";
+    char suc[] = "### 이제 관리자입니다.\n";
+    char inc[] = "### 유효하지 않은 비밀번호입니다.\n";
     if(strcmp(opt, get_pswrd()) == 0)
     {
         (*cl)[id].perm = 1;

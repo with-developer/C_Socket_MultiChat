@@ -28,7 +28,7 @@ int init_socket(int port)
     main_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (main_socket == -1)
     {
-        fprintf(stderr, "%s (%d): Сокет не был создан: %s\n",
+        fprintf(stderr, "%s (%d): 소켓이 생성되지 않았습니다.: %s\n",
                 __FILE__, __LINE__ - 3,  strerror(errno));
         exit(1);
     }
@@ -37,14 +37,14 @@ int init_socket(int port)
 
     if(bind(main_socket, (struct sockaddr *) &adr, sizeof(adr)) == -1)
     {
-        fprintf(stderr, "%s (%d): Не удалось привязать к адресу: %s\n",
+        fprintf(stderr, "%s (%d): 주소에 바인딩하지 못했습니다.: %s\n",
                 __FILE__, __LINE__ - 2,  strerror(errno));
         exit(1);
     }
 
     if(listen(main_socket, MAX_QUEUE) == -1)
     {
-        fprintf(stderr, "%s (%d): Не удалось установить сокет в режим TCP: %s\n",
+        fprintf(stderr, "%s (%d): 소켓을 모드로 설정하지 못했습니다. TCP: %s\n",
                 __FILE__, __LINE__ - 2,  strerror(errno));
         exit(1);
     }
@@ -84,7 +84,7 @@ poll_fds add_fds(poll_fds fds, int fd)
         fds = realloc(fds, sizeof(struct pollfd) * max_fds);
         if(fds == NULL)
         {
-            fprintf(stderr, "%s (%d): Ошибка realloc: %s\n",
+            fprintf(stderr, "%s (%d): 재 할당 오류: %s\n",
                     __FILE__, __LINE__ - 3,  strerror(errno));
             free(temp_fds);
             exit(1);
@@ -115,7 +115,7 @@ int delete_fds(poll_fds *fds, int id)
         max_fds = max_fds - MEM_INC_SIZE;
         if(max_fds < 1)
         {
-            fprintf(stderr, "%s (%d): Ошибка внутренней структуры данных\n",
+            fprintf(stderr, "%s (%d): 내부 데이터 구조 오류\n",
                     __FILE__, __LINE__ - 3);
             exit(1);
         }
@@ -154,7 +154,7 @@ void clear_fds(poll_fds fds)
 int disconnect(poll_fds *fds, clients *cl, int id)
 {
     int new_id, len;
-    char *temp, msg[] = "*** С сервера вышел ";
+    char *temp, msg[] = "*** 서버를 떠났습니다. ";
 
     len = sizeof(msg) + strlen((*cl)[id].name) + 1;
     temp = malloc(sizeof(char) * len);
@@ -193,7 +193,7 @@ clients add_client(clients cl)
         cl = realloc(cl, sizeof(struct client_info) * max_fds);
         if(cl == NULL)
         {
-            fprintf(stderr, "%s (%d): Ошибка realloc: %s\n",
+            fprintf(stderr, "%s (%d): 재 할당 오류: %s\n",
                     __FILE__, __LINE__ - 3,  strerror(errno));
             free(temp);
             exit(1);
@@ -222,7 +222,7 @@ void add_name(clients cl, int id, char *name)
         cl[id].recv = realloc(cl[id].recv, sizeof(char[MAX_LEN]) * cl[id].max_names);
         if(cl[id].recv == NULL)
         {
-            fprintf(stderr, "%s (%d): Ошибка realloc: %s\n",
+            fprintf(stderr, "%s (%d): 재 할당 오류: %s\n",
                     __FILE__, __LINE__ - 3,  strerror(errno));
             free(temp);
             exit(1);
@@ -265,7 +265,7 @@ void delete_clients(clients *cl, int id)
         max_clients = max_clients - MEM_INC_SIZE;
         if(max_clients <= 1)
         {
-            fprintf(stderr, "%s (%d): Ошибка внутренней структуры данных\n",
+            fprintf(stderr, "%s (%d): 내부 데이터 구조 오류\n",
                     __FILE__, __LINE__ - 3);
             exit(1);
         }
@@ -273,7 +273,7 @@ void delete_clients(clients *cl, int id)
         if(temp == NULL)
         {
             free((*cl)[id].recv);
-            fprintf(stderr, "%s (%d): Ошибка выделения памяти malloc: %s\n",
+            fprintf(stderr, "%s (%d): 메모리 할당 오류 malloc: %s\n",
                     __FILE__, __LINE__ - 3,  strerror(errno));
             exit(1);
         }
@@ -355,7 +355,7 @@ void cut(char *s, int n)
     temp = malloc(sizeof(char) * (len - n));
     if(temp == NULL)
     {
-        fprintf(stderr, "%s (%d): Ошибка выделения памяти malloc: %s\n",
+        fprintf(stderr, "%s (%d): 메모리 할당 오류 malloc: %s\n",
                 __FILE__, __LINE__ - 3,  strerror(errno));
         exit(1);
     }
@@ -368,7 +368,7 @@ void cut(char *s, int n)
 
 void set_pswrd()
 {
-    printf("Введите пароль администратора для сервера:\n");
+    printf("서버의 관리자 암호를 입력하세요:\n");
     scanf("%256s", pswrd);
 }
 
@@ -384,7 +384,7 @@ void ban_init()
     pban = malloc(sizeof(struct ban_info) * max_ban);
     if(pban == NULL)
     {
-        fprintf(stderr, "%s (%d): Структура не была создана: %s\n",
+        fprintf(stderr, "%s (%d): 구조가 생성되지 않았습니다.: %s\n",
                 __FILE__, __LINE__ - 3,  strerror(errno));
         exit(1);
     }
@@ -400,7 +400,7 @@ void ban_name(char * name)
         pban = realloc(pban, sizeof(struct ban_info) * max_ban);
         if(pban == NULL)
         {
-            fprintf(stderr, "%s (%d): Ошибка realloc: %s\n",
+            fprintf(stderr, "%s (%d): 재 할당 오류: %s\n",
                     __FILE__, __LINE__ - 3,  strerror(errno));
             free(temp);
             exit(1);
@@ -426,15 +426,15 @@ void ban_clean()
 
 void auth(int socket)
 {
-    char str[] = "### Введите свое имя: \n";
+    char str[] = "### 이름을 입력하세요.: \n";
     write(socket, str, sizeof(str));
 }
 
 void auth2(poll_fds fds, clients cl, int client, char * str, int socket)
 {
-    char s[] = "*** Добро пожаловать, ", * temp;
-    char busy[] = "### Имя уже занято \n";
-    char banned[] = "### Имя забанено\n";
+    char s[] = "*** 환영합니다., ", * temp;
+    char busy[] = "### 이미 사용중인 이름입니다. \n";
+    char banned[] = "### 금지된 이름입니다.\n";
     int size, i;
     strip(str);
     if(strcmp(str, "") == 0)
@@ -510,8 +510,9 @@ void check_malloc(void * ptr, char * file, int line)
 {
     if(ptr == NULL)
     {
-        fprintf(stderr, "%s (%d): Ошибка выделения памяти: %s\n",
+        fprintf(stderr, "%s (%d): 메모리 할당 오류: %s\n",
                 file, line - 1,  strerror(errno));
         exit(1);
     }
 }
+

@@ -108,19 +108,17 @@ int main(int argc, char * argv[])
                 {
                     fprintf(stderr, "%s (%d): 소켓에서 읽는 중 오류 발생: %s\n",
                             __FILE__, __LINE__ - 3,  strerror(errno));
-                    exit(1); /*Тк если один из вводов отвалился, то делать нечего*/
+                    exit(1);
                 }
                 if(n_read == 0)
                 {
                     switch (i)
                     {
                     case 0:
-                        /*Закончился ввод*/
                         exit(0);
                         break;
                     case 1:
-                        // fprintf(stderr, "sex \n");
-                        fprintf(stderr, "F.тключены от сервера\n");
+                        fprintf(stderr, "서버에서 연결 해제됨\n");
                         exit(0);
                         break;
                     }

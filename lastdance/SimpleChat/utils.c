@@ -15,7 +15,6 @@ char pswrd[MAX_LEN];
 ban_type pban;
 
 
-/* Функция инициализирует серверный сокет */
 int init_socket(int port)
 {
     int main_socket, opt = 1;
@@ -108,8 +107,7 @@ int delete_fds(poll_fds *fds, int id)
     int i, j, new_id = id;
     (*fds)[id].fd = -1;
     del_fds++;
-    /* Если мы так наудаляли на размер выделяемой памяти, то почистим массив
-     * вручную, да долго и муторно, но писать хэш-таблицу еще муторнее :(*/
+
     if(del_fds > MEM_INC_SIZE)
     {
         max_fds = max_fds - MEM_INC_SIZE;
@@ -130,7 +128,7 @@ int delete_fds(poll_fds *fds, int id)
                     new_id = j;
                 j++;
             }
-            /* Флаг, что прошли старый id, остожно портим его */
+            
             if(id == i)
                 id = -1;
         }
@@ -258,8 +256,7 @@ void delete_clients(clients *cl, int id)
     free((*cl)[id].recv);
     (*cl)[id].recv = NULL;
     del_clients++;
-    /* Если мы так наудаляли на размер выделяемой памяти, то почистим массив
-     * вручную, да долго и муторно, но писать хэш-таблицу еще муторнее :(*/
+
     if(del_clients > MEM_INC_SIZE)
     {
         max_clients = max_clients - MEM_INC_SIZE;

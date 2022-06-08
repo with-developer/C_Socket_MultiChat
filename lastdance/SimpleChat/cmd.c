@@ -27,7 +27,6 @@ void nick(poll_fds *fds, clients *cl, int id, char *opt);
 void shutdown(poll_fds *fds, clients *cl, int id, char *opt);
 void admin(poll_fds *fds, clients *cl, int id, char *opt);
 /*
- * Нереализованный функционал
 void room(poll_fds fds, clients cl, int id, char *opt);
 void topic(poll_fds fds, clients cl, int id, char *opt);
 void setadmin(poll_fds fds, clients cl, int id, char *opt);
@@ -46,10 +45,10 @@ struct one_cmd cmds_str[] =
     {"\\ban", ban, " <이름> <사유> - 사용자 차단(관리자 권한)\n"},
     {"\\kick", kick, " <이름> <사유> - 사용자 강제퇴장(관리자 권한)\n"},
     {"\\nick", nick, " <기존 이름> <새로운 이름> - 사용자 이름 변경(관리자 권한)\n"},
-    {"\\shutdown", shutdown, " <메시지> - 서버 비활성화(관리자 권한)\n"},
+    {"\\shutdown", shutdown, " <message> - 서버 비활성화(관리자 권한)\n"},
     {"\\admin", admin, " <비밀번호> - 관리자 권한 얻기\n"},
-    /*  Нереализованный функционал:
-     *  {"\\room", room},
+    /* 
+        {"\\room", room},
         {"\\topic", topic},
         {"\\setadmin", setadmin},
         {"\\banadmin", banadmin},
@@ -65,7 +64,6 @@ int cmds(poll_fds *fds, clients *cl, int id, char * buf)
     char * temp;
     for(i = LAST - 1; i >= 0; i--)
     {
-        /* Да получается медленно, можно придумать какой-нибудь простой хэш */
         if(strncmp(buf, cmds_str[i].cmd_str, strlen(cmds_str[i].cmd_str)) == 0)
         {
             temp = malloc(sizeof(char) * (strlen(buf) + 1));

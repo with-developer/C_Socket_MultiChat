@@ -154,7 +154,7 @@ void clear_fds(poll_fds fds)
 int disconnect(poll_fds *fds, clients *cl, int id)
 {
     int new_id, len;
-    char *temp, msg[] = "*** 서버를 떠났습니다. ***";
+    char *temp, msg[] = "*** 서버를 떠났습니다. ***\n >>> ";
 
     len = sizeof(msg) + strlen((*cl)[id].name) + 1;
     temp = malloc(sizeof(char) * len);
@@ -463,7 +463,7 @@ void auth2(poll_fds fds, clients cl, int client, char * str, int socket)
         strcpy(temp, "");
         strcat(temp, s);
         strcat(temp, str);
-        strcat(temp, "님!\n\n");
+        strcat(temp, "!\n");
         mass_send(fds, temp, size);
         free(temp);
     }

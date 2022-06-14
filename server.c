@@ -134,7 +134,7 @@ int main(int argc, char * argv[])
                         {
                             if(cmds(&fds, &clients_base, i, msg))
                             {
-                                /* Все сделается в cmd */;
+                                ;
                             }
                             else
                             {

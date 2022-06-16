@@ -1,9 +1,9 @@
-# C_Socket_MultiChat
-Tcp/Ip C Socket Multi Chatting
+# C_Socket_MultiChat<br>
+Tcp/Ip C Socket Multi Chatting<br>
 
-C언어 기반 소켓 멀티 채팅 프로그램입니다.
+C언어 기반 소켓 멀티 채팅 프로그램입니다.<br>
 
-기능
+기능<br>
 \help - 도움말 표시 <br>
 \users - 사용자 목록 출력<br>
 \quit - 클라이언트 종료<br>

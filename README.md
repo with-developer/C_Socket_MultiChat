@@ -15,5 +15,4 @@ C언어 기반 소켓 멀티 채팅 프로그램입니다.<br>
 \nick - 사용자 이름 변경(admin)<br>
 \shutdown - 서버 종료(admin)<br>
 
-<img width="1440" alt="스크린샷 2021-11-24 오전 4 29 04" src="https://user-images.githubusercontent.com/50432821/158760293-0279b861-b3d5-4d06-b69d-d79b5d2427c7.png">
-<img src="/with-developer/C_Socket_MultiChat/blob/main/Images/C_Socket_MultiChat.png?raw=true" alt="C_Socket_MultiChat.png">
+<img width="1440" alt="스크린샷 2021-11-24 오전 4 29 04" src="https://github.com/with-developer/C_Socket_MultiChat/blob/873e6f70bfcd5226543dd9e5feb23c3169fecce2/Images/C_Socket_MultiChat.png">
